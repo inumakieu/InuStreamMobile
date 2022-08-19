@@ -2,7 +2,7 @@
     Inu's Stream (iOS/Android)
 </h1>
 
-<img width="200" src="https://github.com/5H4D0WILA/InuStreamMobile/blob/main/Screenshots/screenshot_ios_iphone12black_portrait.png" alt="Info Page Screenshot">
+<img width="300" src="https://github.com/5H4D0WILA/InuStreamMobile/blob/main/Screenshots/screenshot_ios_iphone12black_portrait.png" alt="Info Page Screenshot">
 
 
 This is the mobile version of my [Inu's Stream](https://inu.watch) website
