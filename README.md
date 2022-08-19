@@ -1,6 +1,6 @@
-<p align="center">
-    # Inu's Stream (iOS/Android)
-</p>
+<h1 align="center">
+    Inu's Stream (iOS/Android)
+</h1>
 
 <img width="200" src="https://github.com/5H4D0WILA/InuStreamMobile/blob/main/Screenshots/screenshot_ios_iphone12black_portrait.png" alt="Info Page Screenshot">
 
