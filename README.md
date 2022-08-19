@@ -1,16 +1,13 @@
-# inu_stream_ios
+# Inu's Stream (iOS/Android)
 
-A new Flutter project.
+This is the mobile version of my [Inu's Stream](https://inu.watch) website
+It is a simple UI design without any ads to watch anime uninterrupted.
 
-## Getting Started
+## Features:
+- [x] Search Page
+- [x] Info Page
+- [x] Watch Page
+- [ ] Recent Episodes
+- [ ] Continue Watching
+- [ ] Watch List using anilist login
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
