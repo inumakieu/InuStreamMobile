@@ -71,7 +71,8 @@ class _SearchPageState extends State<SearchPage> {
               child: ListView.builder(
                   itemCount: json.length,
                   itemBuilder: ((context, index) {
-                    if (json[index]['status'] != 'Not yet aired') {
+                    if (json[index]['status'] != 'Not yet aired' ||
+                        json[index]['releaseDate'] != null) {
                       return Column(
                         children: [
                           GestureDetector(
@@ -79,6 +80,7 @@ class _SearchPageState extends State<SearchPage> {
                               Get.to(
                                 () => InfoPage(
                                   anilistID: json[index]['id'].toString(),
+                                  searchedJson: json[index],
                                 ),
                                 transition: Transition.rightToLeftWithFade,
                                 curve: Curves.ease,
@@ -86,15 +88,22 @@ class _SearchPageState extends State<SearchPage> {
                             },
                             child: Row(
                               children: [
-                                Container(
-                                  width: 100,
-                                  height: 140,
-                                  decoration: BoxDecoration(
+                                Hero(
+                                  tag: json[index]['id'],
+                                  child: Container(
+                                    width: 100,
+                                    height: 150,
+                                    decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(12.0),
-                                      image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: NetworkImage(
-                                              json[index]['image']))),
+                                    ),
+                                    clipBehavior: Clip.antiAlias,
+                                    child: Image(
+                                      fit: BoxFit.cover,
+                                      image: NetworkImage(
+                                        json[index]['image'],
+                                      ),
+                                    ),
+                                  ),
                                 ),
                                 SizedBox(
                                   width: 12.0,
@@ -106,19 +115,21 @@ class _SearchPageState extends State<SearchPage> {
                                           40.0 -
                                           100.0 -
                                           12.0,
-                                      child: Text(
-                                        json[index]['title']['userPreferred'] !=
-                                                null
-                                            ? json[index]['title']
-                                                ['userPreferred']
-                                            : json[index]['id'],
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20.0,
+                                      child: Hero(
+                                        tag: json[index]['id'].toString() +
+                                            json[index]['title']['english']
+                                                .toString(),
+                                        child: Text(
+                                          json[index]['title']['english']
+                                              .toString(),
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20.0,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                     SizedBox(

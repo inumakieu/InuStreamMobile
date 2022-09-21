@@ -112,6 +112,7 @@ class _WatchPageState extends State<WatchPage> {
         selectedSubtitle: selectedSubtitle,
         json: widget.json,
         episodeNumber: widget.episodeNumber,
+        episodeJson: jsonDecode('{}'),
       ),
     );
     SystemChrome.setPreferredOrientations([
@@ -188,6 +189,7 @@ class _WatchPageState extends State<WatchPage> {
                           selectedSubtitle: selectedSubtitle,
                           json: widget.json,
                           episodeNumber: widget.episodeNumber,
+                          episodeJson: jsonDecode(snapshot.data!.body),
                         ),
                         errorBuilder: (context, errorMessage) {
                           return Center(

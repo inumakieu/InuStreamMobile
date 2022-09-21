@@ -6,14 +6,21 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:inu_stream_ios/pages/home_page.dart';
+import 'package:inu_stream_ios/pages/search_page.dart';
 import 'package:inu_stream_ios/pages/watch_page.dart';
 import 'package:scroll_shadow_container/scroll_shadow_container.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class InfoPage extends StatefulWidget {
   final String anilistID;
   final bool isScaffold;
-  const InfoPage({Key? key, required this.anilistID, this.isScaffold = false})
-      : super(key: key);
+  final dynamic searchedJson;
+  const InfoPage({
+    Key? key,
+    required this.anilistID,
+    this.isScaffold = false,
+    required this.searchedJson,
+  }) : super(key: key);
 
   @override
   State<InfoPage> createState() => _InfoPageState();
@@ -42,201 +49,6 @@ class _InfoPageState extends State<InfoPage> {
                   'https://consumet-api.herokuapp.com/meta/anilist/info/${widget.anilistID}?provider=zoro')),
               builder: (context, snapshot) {
                 switch (snapshot.connectionState) {
-                  case ConnectionState.waiting:
-                    return CustomScrollView(
-                      slivers: [
-                        SliverToBoxAdapter(
-                          child: Stack(
-                            children: [
-                              Hero(
-                                tag: 'anime_bg',
-                                child: Container(
-                                  height: 560.0,
-                                  width: double.infinity,
-                                  clipBehavior: Clip.antiAlias,
-                                  decoration: const BoxDecoration(
-                                    color: Colors.grey,
-                                    borderRadius: BorderRadius.vertical(
-                                      bottom: Radius.circular(40.0),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                height: 560.0,
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      Color(0xff16151A),
-                                      Color(0xff16151A).withOpacity(0.3),
-                                    ],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                  ),
-                                  borderRadius: BorderRadius.vertical(
-                                    bottom: Radius.circular(40.0),
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 100.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        height: 20.0,
-                                        width: 120.0,
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey,
-                                          borderRadius:
-                                              BorderRadius.circular(8.0),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 6.0,
-                                      ),
-                                      Container(
-                                        height: 24.0,
-                                        width: 200.0,
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey,
-                                          borderRadius:
-                                              BorderRadius.circular(8.0),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 14.0,
-                                      ),
-                                      Container(
-                                        height: 24.0,
-                                        width: 260.0,
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey,
-                                          borderRadius:
-                                              BorderRadius.circular(8.0),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 14.0,
-                                      ),
-                                      Container(
-                                        height: 20.0,
-                                        width: 220.0,
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey,
-                                          borderRadius:
-                                              BorderRadius.circular(8.0),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 30.0,
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            height: 20.0,
-                                            width: 280.0,
-                                            decoration: BoxDecoration(
-                                              color: Colors.grey,
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 14.0,
-                                          ),
-                                          Container(
-                                            height: 20.0,
-                                            width: 280.0,
-                                            decoration: BoxDecoration(
-                                              color: Colors.grey,
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 14.0,
-                                          ),
-                                          Container(
-                                            height: 20.0,
-                                            width: 280.0,
-                                            decoration: BoxDecoration(
-                                              color: Colors.grey,
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 14.0,
-                                          ),
-                                          Container(
-                                            height: 20.0,
-                                            width: 180.0,
-                                            decoration: BoxDecoration(
-                                              color: Colors.grey,
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 14.0, horizontal: 26.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      height: 20.0,
-                                      width: 180.0,
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey,
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 6.0,
-                                    ),
-                                    Container(
-                                      height: 20.0,
-                                      width: 140.0,
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey,
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                CircleAvatar(
-                                  radius: 24.0,
-                                  backgroundColor: Colors.black,
-                                  child: Icon(
-                                    FontAwesomeIcons.plus,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
                   default:
                     if (snapshot.hasData) {
                       var json = jsonDecode(snapshot.data!.body);
@@ -245,25 +57,18 @@ class _InfoPageState extends State<InfoPage> {
                           SliverToBoxAdapter(
                             child: Stack(
                               children: [
-                                Hero(
-                                  tag: 'anime_bg',
-                                  child: Container(
-                                    height: 560.0,
-                                    width: double.infinity,
-                                    clipBehavior: Clip.antiAlias,
-                                    decoration: const BoxDecoration(
-                                      color: Colors.deepPurple,
-                                      borderRadius: BorderRadius.vertical(
-                                        bottom: Radius.circular(40.0),
-                                      ),
-                                    ),
-                                    child: Image(
-                                        fit: BoxFit.cover,
-                                        image: NetworkImage(json['image'])),
-                                  ),
+                                Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.6 -
+                                          1,
+                                  width: double.infinity,
+                                  child: Image(
+                                      fit: BoxFit.cover,
+                                      image: NetworkImage(json['cover'])),
                                 ),
                                 Container(
-                                  height: 560.0,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.6,
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
@@ -271,196 +76,206 @@ class _InfoPageState extends State<InfoPage> {
                                         Color(0xff16151A),
                                         Color(0xff16151A).withOpacity(0.3),
                                       ],
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                    ),
-                                    borderRadius: BorderRadius.vertical(
-                                      bottom: Radius.circular(40.0),
+                                      begin: Alignment.bottomCenter,
+                                      end: Alignment.topCenter,
                                     ),
                                   ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(top: 100.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          json['duration'].toString() +
-                                              ' min / Episode',
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 12.0,
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ),
-                                        Text(
-                                          json['title']['english'],
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 2,
-                                          textAlign: TextAlign.center,
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 32.0,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Text(
-                                          json['title']['native'],
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 2,
-                                          textAlign: TextAlign.center,
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 26.0,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 14.0,
-                                        ),
-                                        RichText(
-                                          text: TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text: 'Episodes: ',
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 16.0,
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                              ),
-                                              TextSpan(
-                                                text: json['episodes']
-                                                    .length
-                                                    .toString(),
-                                                style: const TextStyle(
-                                                  color: Color(0xffDC1623),
-                                                  fontSize: 16.0,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              TextSpan(
-                                                text: ' - Status: ',
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 16.0,
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                              ),
-                                              TextSpan(
-                                                text: json['status'],
-                                                style: const TextStyle(
-                                                  color: Color(0xffDC1623),
-                                                  fontSize: 16.0,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Container(
-                                          width: double.infinity,
-                                          height: 250.0,
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 20.0, vertical: 30.0),
-                                          child: RichText(
-                                            text: TextSpan(
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 14.0,
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                              children: json['description']
-                                                  .replaceAll('\n', '')
-                                                  .toString()
-                                                  .replaceAll('<br>', '\n')
-                                                  .split('<i>')
-                                                  .map((e) {
-                                                if (e.contains('</i>')) {
-                                                  return TextSpan(
-                                                    children: e
-                                                        .split('</i>')
-                                                        .asMap()
-                                                        .entries
-                                                        .map(
-                                                          (i) => i.key == 0
-                                                              ? TextSpan(
-                                                                  text: i.value,
-                                                                  style: TextStyle(
-                                                                      fontStyle:
-                                                                          FontStyle
-                                                                              .italic,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold))
-                                                              : TextSpan(
-                                                                  text: i.value,
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontStyle:
-                                                                        FontStyle
-                                                                            .normal,
-                                                                  ),
-                                                                ),
-                                                        )
-                                                        .toList(),
-                                                  );
-                                                } else {
-                                                  return TextSpan(text: e);
-                                                }
-                                              }).toList(),
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
-                                      ],
+                                ),
+                                Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.6,
+                                  width: double.infinity,
+                                  alignment: Alignment.bottomCenter,
+                                  child: Hero(
+                                    tag: json['id'],
+                                    child: Container(
+                                      height: 270.0,
+                                      width: 170.0,
+                                      clipBehavior: Clip.antiAlias,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(12.0)),
+                                      child: Image(
+                                          fit: BoxFit.cover,
+                                          image: NetworkImage(json['image'])),
                                     ),
                                   ),
-                                )
+                                ),
                               ],
                             ),
                           ),
                           SliverToBoxAdapter(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  margin:
+                                      EdgeInsets.symmetric(horizontal: 10.0),
+                                  padding: EdgeInsets.only(top: 20.0),
+                                  child: Hero(
+                                    tag: json['id'] + json['title']['english'],
+                                    child: Text(
+                                      json['title']['english'],
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 24.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  json['title']['native'],
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily:
+                                        GoogleFonts.zenMaruGothic().fontFamily,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SliverToBoxAdapter(
+                            child: Container(
+                              width: double.infinity,
+                              margin: EdgeInsets.all(30.0),
+                              padding: EdgeInsets.all(20.0),
+                              decoration: BoxDecoration(
+                                  color: Color(0xff1E222C),
+                                  borderRadius: BorderRadius.circular(12.0)),
+                              child: RichText(
+                                text: TextSpan(
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12.0,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  children: json['description']
+                                      .replaceAll('\n', '')
+                                      .toString()
+                                      .replaceAll('<br>', '\n')
+                                      .split('<i>')
+                                      .map((e) {
+                                    if (e.contains('</i>')) {
+                                      return TextSpan(
+                                        children: e
+                                            .split('</i>')
+                                            .asMap()
+                                            .entries
+                                            .map(
+                                              (i) => i.key == 0
+                                                  ? TextSpan(
+                                                      text: i.value,
+                                                      style: TextStyle(
+                                                          fontStyle:
+                                                              FontStyle.italic,
+                                                          fontWeight:
+                                                              FontWeight.bold))
+                                                  : TextSpan(
+                                                      text: i.value,
+                                                      style: TextStyle(
+                                                        fontStyle:
+                                                            FontStyle.normal,
+                                                      ),
+                                                    ),
+                                            )
+                                            .toList(),
+                                      );
+                                    } else {
+                                      return TextSpan(text: e);
+                                    }
+                                  }).toList(),
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                          SliverToBoxAdapter(
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 14.0, horizontal: 26.0),
+                              padding: const EdgeInsets.only(
+                                bottom: 20.0,
+                                left: 30.0,
+                                right: 30.0,
+                              ),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Rating: ${json['rating'] / 10} / 10',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 6.0,
-                                      ),
-                                      Text(
-                                        'Released: ${json['releaseDate']}',
-                                        style: TextStyle(
-                                          color: Color(0xff999999),
-                                          fontSize: 12.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  CircleAvatar(
-                                    radius: 24.0,
-                                    backgroundColor: Colors.black,
-                                    child: Icon(
-                                      FontAwesomeIcons.plus,
-                                      color: Colors.white,
+                                  Container(
+                                    width: json['nextAiringEpisode'] != null
+                                        ? 190.0
+                                        : MediaQuery.of(context).size.width -
+                                            60.0,
+                                    height: 40.0,
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: json['genres'].length,
+                                      itemBuilder: ((context, index) {
+                                        return Row(
+                                          children: [
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 22.0,
+                                                  vertical: 12.0),
+                                              decoration: BoxDecoration(
+                                                color: Colors.black,
+                                                borderRadius:
+                                                    BorderRadius.circular(50.0),
+                                              ),
+                                              child: Text(
+                                                json['genres'][index],
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 8.0,
+                                            ),
+                                          ],
+                                        );
+                                      }),
                                     ),
-                                  )
+                                  ),
+                                  json['nextAiringEpisode'] != null
+                                      ? Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 18.0, vertical: 8.0),
+                                          decoration: BoxDecoration(
+                                            color: Color(0xffEE4546),
+                                            borderRadius:
+                                                BorderRadius.circular(16.0),
+                                          ),
+                                          child: Text(
+                                            'Episode ' +
+                                                json['nextAiringEpisode']
+                                                        ['episode']
+                                                    .toString() +
+                                                ':\n' +
+                                                Duration(
+                                                        seconds: json[
+                                                                'nextAiringEpisode']
+                                                            ['timeUntilAiring'])
+                                                    .inDays
+                                                    .toString() +
+                                                ' days',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        )
+                                      : SizedBox.shrink(),
                                 ],
                               ),
                             ),
@@ -478,22 +293,19 @@ class _InfoPageState extends State<InfoPage> {
                           SliverToBoxAdapter(
                             child: Stack(
                               children: [
-                                Hero(
-                                  tag: 'anime_bg',
-                                  child: Container(
-                                    height: 560.0,
-                                    width: double.infinity,
-                                    clipBehavior: Clip.antiAlias,
-                                    decoration: const BoxDecoration(
-                                      color: Colors.deepPurple,
-                                      borderRadius: BorderRadius.vertical(
-                                        bottom: Radius.circular(40.0),
-                                      ),
-                                    ),
-                                  ),
+                                Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.6 -
+                                          1,
+                                  width: double.infinity,
+                                  child: Image(
+                                      fit: BoxFit.cover,
+                                      image: NetworkImage(
+                                          widget.searchedJson['cover'])),
                                 ),
                                 Container(
-                                  height: 560.0,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.6,
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
@@ -501,154 +313,127 @@ class _InfoPageState extends State<InfoPage> {
                                         Color(0xff16151A),
                                         Color(0xff16151A).withOpacity(0.3),
                                       ],
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                    ),
-                                    borderRadius: BorderRadius.vertical(
-                                      bottom: Radius.circular(40.0),
+                                      begin: Alignment.bottomCenter,
+                                      end: Alignment.topCenter,
                                     ),
                                   ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(top: 100.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          '0 min / Episode',
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 12.0,
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ),
-                                        Text(
-                                          'Anime Title English',
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 2,
-                                          textAlign: TextAlign.center,
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 32.0,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Text(
-                                          'Anime Title Native',
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 2,
-                                          textAlign: TextAlign.center,
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 26.0,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 14.0,
-                                        ),
-                                        RichText(
-                                          text: TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text: 'Episodes: ',
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 16.0,
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                              ),
-                                              TextSpan(
-                                                text: '0',
-                                                style: const TextStyle(
-                                                  color: Color(0xffDC1623),
-                                                  fontSize: 16.0,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              TextSpan(
-                                                text: ' - Status: ',
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 16.0,
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                              ),
-                                              TextSpan(
-                                                text: 'STATUS',
-                                                style: const TextStyle(
-                                                  color: Color(0xffDC1623),
-                                                  fontSize: 16.0,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Container(
-                                          width: double.infinity,
-                                          height: 250.0,
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 20.0, vertical: 30.0),
-                                          child: Text(
-                                            'Anime Description',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 14.0,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
-                                      ],
+                                ),
+                                Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.6,
+                                  width: double.infinity,
+                                  alignment: Alignment.bottomCenter,
+                                  child: Hero(
+                                    tag: widget.searchedJson['id'],
+                                    child: Container(
+                                      height: 270.0,
+                                      width: 170.0,
+                                      clipBehavior: Clip.antiAlias,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(12.0)),
+                                      child: Image(
+                                          fit: BoxFit.cover,
+                                          image: NetworkImage(
+                                              widget.searchedJson['image'])),
                                     ),
                                   ),
-                                )
+                                ),
                               ],
                             ),
                           ),
                           SliverToBoxAdapter(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 14.0, horizontal: 26.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Rating: 10 / 10',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  margin:
+                                      EdgeInsets.symmetric(horizontal: 10.0),
+                                  padding: EdgeInsets.only(top: 20.0),
+                                  child: Hero(
+                                    tag: widget.searchedJson['id'] +
+                                        widget.searchedJson['title']['english'],
+                                    child: Text(
+                                      widget.searchedJson['title']['english'],
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 24.0,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      SizedBox(
-                                        height: 6.0,
-                                      ),
-                                      Text(
-                                        'Released: 2020',
-                                        style: TextStyle(
-                                          color: Color(0xff999999),
-                                          fontSize: 12.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  CircleAvatar(
-                                    radius: 24.0,
-                                    backgroundColor: Colors.black,
-                                    child: Icon(
-                                      FontAwesomeIcons.plus,
-                                      color: Colors.white,
                                     ),
-                                  )
-                                ],
+                                  ),
+                                ),
+                                Text(
+                                  widget.searchedJson['title']['native'],
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily:
+                                        GoogleFonts.zenMaruGothic().fontFamily,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SliverToBoxAdapter(
+                            child: Container(
+                              width: double.infinity,
+                              margin: EdgeInsets.all(30.0),
+                              padding: EdgeInsets.all(20.0),
+                              decoration: BoxDecoration(
+                                  color: Color(0xff1E222C),
+                                  borderRadius: BorderRadius.circular(12.0)),
+                              child: RichText(
+                                text: TextSpan(
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12.0,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  children: widget.searchedJson['description']
+                                      .replaceAll('\n', '')
+                                      .toString()
+                                      .replaceAll('<br>', '\n')
+                                      .split('<i>')
+                                      .map((e) {
+                                    if (e.contains('</i>')) {
+                                      return TextSpan(
+                                        children: e
+                                            .split('</i>')
+                                            .asMap()
+                                            .entries
+                                            .map(
+                                              (i) => i.key == 0
+                                                  ? TextSpan(
+                                                      text: i.value,
+                                                      style: TextStyle(
+                                                          fontStyle:
+                                                              FontStyle.italic,
+                                                          fontWeight:
+                                                              FontWeight.bold))
+                                                  : TextSpan(
+                                                      text: i.value,
+                                                      style: TextStyle(
+                                                        fontStyle:
+                                                            FontStyle.normal,
+                                                      ),
+                                                    ),
+                                            )
+                                            .toList(),
+                                      );
+                                    } else {
+                                      return TextSpan(text: e);
+                                    }
+                                  }).toList(),
+                                ),
+                                textAlign: TextAlign.center,
                               ),
                             ),
                           ),
@@ -663,14 +448,7 @@ class _InfoPageState extends State<InfoPage> {
               left: 20.0,
               child: GestureDetector(
                 onTap: () {
-                  if (widget.isScaffold) {
-                    Get.offAll(
-                      () => HomePage(),
-                      transition: Transition.leftToRight,
-                    );
-                  } else {
-                    Get.back();
-                  }
+                  Get.back();
                 },
                 child: CircleAvatar(
                   backgroundColor: Colors.transparent,
@@ -711,9 +489,8 @@ class _EpisodeListState extends State<EpisodeList> {
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.only(
-            left: 26.0,
-            right: 26.0,
+          padding: EdgeInsets.symmetric(
+            horizontal: 30.0,
           ),
           child: Container(
             child: Row(
@@ -728,11 +505,11 @@ class _EpisodeListState extends State<EpisodeList> {
                   ),
                 ),
                 Container(
-                  width: 140.0,
+                  width: 120.0,
                   height: 40.0,
                   decoration: BoxDecoration(
                     color: Colors.black,
-                    borderRadius: BorderRadius.circular(8.0),
+                    borderRadius: BorderRadius.circular(20.0),
                   ),
                   padding: EdgeInsets.symmetric(
                     horizontal: 20.0,
@@ -746,7 +523,7 @@ class _EpisodeListState extends State<EpisodeList> {
                           signed: true, decimal: true),
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       decoration: InputDecoration.collapsed(
-                        hintText: 'Number...',
+                        hintText: 'Episode...',
                         hintStyle:
                             TextStyle(color: Colors.white.withOpacity(0.7)),
                         border: InputBorder.none,
@@ -805,8 +582,8 @@ class _EpisodeListState extends State<EpisodeList> {
                         Stack(
                           children: [
                             Container(
-                              width: 150.0,
-                              height: 150 / 16 * 9,
+                              width: 120.0,
+                              height: 120 / 16 * 9,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(
                                   12.0,
@@ -824,8 +601,8 @@ class _EpisodeListState extends State<EpisodeList> {
                                       '')),
                             ),
                             Container(
-                              width: 150.0,
-                              height: 150 / 16 * 9,
+                              width: 120.0,
+                              height: 120 / 16 * 9,
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(
                                     12.0,
@@ -849,10 +626,10 @@ class _EpisodeListState extends State<EpisodeList> {
                           height: 150 / 16 * 9,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(
-                                width: 160.0,
+                                width: MediaQuery.of(context).size.width * 0.5,
                                 child: Text(
                                   widget.json['episodes'][index +
                                           (episodeNumber != -1
@@ -860,19 +637,23 @@ class _EpisodeListState extends State<EpisodeList> {
                                               : 0)]['title'] ??
                                       widget.json['title']['english'],
                                   overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 16.0,
+                                    fontSize: 12.0,
                                   ),
                                 ),
+                              ),
+                              SizedBox(
+                                height: 4.0,
                               ),
                               Text(
                                 'Episode ${index + (episodeNumber != -1 ? episodeNumber : 1)}',
                                 style: TextStyle(
                                   color: Color(0xff999999),
                                   fontWeight: FontWeight.w400,
-                                  fontSize: 12.0,
+                                  fontSize: 10.0,
                                 ),
                               ),
                             ],

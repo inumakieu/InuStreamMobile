@@ -60,7 +60,7 @@ class _FeaturedContentState extends State<FeaturedContent>
                                   fit: StackFit.expand,
                                   children: [
                                     Hero(
-                                      tag: 'anime_bg',
+                                      tag: e.toString(),
                                       child: AnimatedContainer(
                                         duration: Duration(milliseconds: 200),
                                         width: double.infinity,
@@ -331,6 +331,9 @@ class _FeaturedContentState extends State<FeaturedContent>
                                                                             [
                                                                             'id']
                                                                         .toString(),
+                                                                    searchedJson:
+                                                                        featuredJson[
+                                                                            featuredSelectedIndex],
                                                                   ),
                                                                   transition:
                                                                       Transition

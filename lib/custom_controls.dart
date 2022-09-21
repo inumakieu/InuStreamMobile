@@ -1,6 +1,7 @@
 // ignore_for_file: implementation_imports, depend_on_referenced_packages
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
@@ -23,6 +24,7 @@ import 'package:inu_stream_ios/pages/info_page.dart';
 import 'package:inu_stream_ios/pages/watch_page.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
+import 'package:http/http.dart' as http;
 
 class CustomControls extends StatefulWidget {
   CustomControls({
@@ -31,6 +33,7 @@ class CustomControls extends StatefulWidget {
     required this.selectedSubtitle,
     required this.json,
     required this.episodeNumber,
+    required this.episodeJson,
     this.showPlayButton = true,
     Key? key,
   }) : super(key: key);
@@ -39,6 +42,7 @@ class CustomControls extends StatefulWidget {
   final Color iconColor;
   final bool showPlayButton;
   final dynamic json;
+  final dynamic episodeJson;
   final int episodeNumber;
   ValueNotifier<int> selectedSubtitle;
 
@@ -166,12 +170,12 @@ class _CustomControlsState extends State<CustomControls>
                     padding: EdgeInsets.symmetric(horizontal: 50.0),
                     child: Center(
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           _buildSkipBack(iconColor, barHeight, 26.0),
                           Container(
                             height: 100,
-                            width: MediaQuery.of(context).size.width / 4,
+                            width: MediaQuery.of(context).size.width / 6,
                             child: _buildPlayPause(
                                 controller, iconColor, barHeight, 46.0),
                           ),
@@ -181,7 +185,42 @@ class _CustomControlsState extends State<CustomControls>
                     ),
                   ),
                 ),
-              )
+              ),
+              (widget.episodeJson['intro'] != null &&
+                      (_subtitlesPosition!.inSeconds >=
+                              widget.episodeJson['intro']['start'] &&
+                          _subtitlesPosition!.inSeconds <=
+                              widget.episodeJson['intro']['end']))
+                  ? Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                      alignment: Alignment.bottomRight,
+                      margin: EdgeInsets.only(
+                        bottom: 66.0,
+                        right: 20.0,
+                      ),
+                      child: GestureDetector(
+                        onTap: () {
+                          chewieController.seekTo(Duration(
+                              seconds: widget.episodeJson['intro']['end']));
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 20.0, vertical: 14.0),
+                          decoration: BoxDecoration(
+                              color: Color(0xff464E6C),
+                              borderRadius: BorderRadius.circular(10.0)),
+                          child: Text(
+                            'Skip Opening',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  : SizedBox.shrink(),
             ],
           ),
         ),
@@ -366,41 +405,17 @@ class _CustomControlsState extends State<CustomControls>
             color: backgroundColor,
             child: Row(
               children: <Widget>[
-                _buildPlayPause(controller, iconColor, barHeight, 32.0),
                 _buildProgressBar(),
                 _buildPosition(iconColor),
                 _buildRemaining(iconColor),
                 _buildSubtitleToggle(iconColor, barHeight),
-                GestureDetector(
-                  onTap: () {
-                    _cancelAndRestartTimer();
-
-                    if (_latestValue.volume == 0) {
-                      controller.setVolume(_latestVolume ?? 0.5);
-                    } else {
-                      _latestVolume = controller.value.volume;
-                      controller.setVolume(0.0);
-                    }
-                  },
-                  child: Container(
-                    height: barHeight,
-                    width: barHeight,
-                    child: Icon(
-                      _latestValue.volume > 0
-                          ? Icons.volume_up
-                          : Icons.volume_off,
-                      color: iconColor,
-                      size: 16,
-                    ),
-                  ),
-                ),
                 if (chewieController.additionalOptions != null &&
                     chewieController.additionalOptions!(context).isNotEmpty)
                   _buildOptionsButton(iconColor, barHeight),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: GestureDetector(
-                    onTap: () {
+                    onTap: () async {
                       _playPause();
                       _chewieController!.dispose();
                       Get.offAll(
@@ -414,7 +429,7 @@ class _CustomControlsState extends State<CustomControls>
                     },
                     child: Container(
                       child: Icon(
-                        FontAwesomeIcons.anglesRight,
+                        FontAwesomeIcons.forwardStep,
                         color: Colors.white,
                         size: 16,
                       ),
@@ -550,18 +565,19 @@ class _CustomControlsState extends State<CustomControls>
     return GestureDetector(
       onTap: _playPause,
       child: Container(
-        height: barHeight,
-        color: Colors.transparent,
-        padding: const EdgeInsets.only(
-          left: 6.0,
-          right: 6.0,
-        ),
-        child: AnimatedPlayPause(
-          color: widget.iconColor,
-          playing: controller.value.isPlaying,
-          size: size,
-        ),
-      ),
+          height: barHeight,
+          color: Colors.transparent,
+          padding: const EdgeInsets.only(
+            left: 6.0,
+            right: 6.0,
+          ),
+          child: Icon(
+            chewieController.isPlaying
+                ? FontAwesomeIcons.pause
+                : FontAwesomeIcons.play,
+            size: size,
+            color: iconColor,
+          )),
     );
   }
 
@@ -639,8 +655,8 @@ class _CustomControlsState extends State<CustomControls>
           right: 6.0,
         ),
         child: Icon(
-          CupertinoIcons.gobackward_15,
-          color: iconColor,
+          FontAwesomeIcons.rotateLeft,
+          color: iconColor.withOpacity(0.7),
           size: size,
         ),
       ),
@@ -665,8 +681,8 @@ class _CustomControlsState extends State<CustomControls>
           right: 8.0,
         ),
         child: Icon(
-          CupertinoIcons.goforward_15,
-          color: iconColor,
+          FontAwesomeIcons.rotateRight,
+          color: iconColor.withOpacity(0.7),
           size: size,
         ),
       ),
@@ -752,21 +768,42 @@ class _CustomControlsState extends State<CustomControls>
                   opacity: notifier.hideStuff ? 0.0 : 1.0,
                   duration: const Duration(milliseconds: 300),
                   child: Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          widget.json['episodes'][widget.episodeNumber]
-                                  ['title'] ??
-                              widget.json['title']['english'],
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        Text(
-                          'Episode ' + (widget.episodeNumber + 1).toString(),
-                          style:
-                              TextStyle(color: Colors.white.withOpacity(0.7)),
-                        ),
-                      ],
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.7,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                widget.json['title']['english'] + ' -',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14.0),
+                              ),
+                              Text(
+                                ' EP: ' + (widget.episodeNumber + 1).toString(),
+                                style: TextStyle(
+                                    color: Color(0xff999999),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14.0),
+                              ),
+                            ],
+                          ),
+                          Text(
+                            widget.json['episodes'][widget.episodeNumber]
+                                ['title'],
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: ui.FontWeight.w500,
+                              fontSize: 12.0,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -844,8 +881,8 @@ class _CustomControlsState extends State<CustomControls>
               ChewieProgressColors(
                 playedColor: Color(0xffFF4242),
                 handleColor: Colors.transparent,
-                bufferedColor: Colors.blueGrey.withOpacity(0.4),
-                backgroundColor: Colors.white,
+                bufferedColor: Colors.white,
+                backgroundColor: Colors.white.withOpacity(0.6),
               ),
         ),
       ),

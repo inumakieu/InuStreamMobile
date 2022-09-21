@@ -45,6 +45,7 @@ dependencies:
   google_nav_bar: ^5.0.6
   scroll_shadow_container: ^2.1.1+2
   keyboard_dismisser: ^3.0.0
+  google_fonts: ^3.0.1
 
 dev_dependencies:
   flutter_test:
