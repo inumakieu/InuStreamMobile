@@ -287,14 +287,12 @@ class _InfoPageState extends State<InfoPage> {
                             ),
                           ),
                           SliverToBoxAdapter(
-                            child: loadedSchema == false
+                            child: Isar.getInstance() == null
                                 ? FutureBuilder<Isar>(
                                     future: Isar.open([AnimeSettingsSchema]),
                                     builder: (context, snapshot) {
                                       if (snapshot.hasData) {
-                                        setState(() {
-                                          loadedSchema = true;
-                                        });
+                                        print('Anime Settings:');
                                         final animeSettings =
                                             snapshot.data!.animeSettings;
 
@@ -311,6 +309,7 @@ class _InfoPageState extends State<InfoPage> {
                                           json: json,
                                         );
                                       } else {
+                                        print('SIZED');
                                         return SizedBox.shrink();
                                       }
                                     },
