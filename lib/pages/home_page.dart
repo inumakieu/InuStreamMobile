@@ -30,11 +30,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         const SliverToBoxAdapter(
           child: Padding(
             padding: EdgeInsets.symmetric(
-              horizontal: 40.0,
+              horizontal: 30.0,
               vertical: 20.0,
             ),
             child: Text(
-              'Recently Released',
+              'Recently Added',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 22.0,

@@ -192,7 +192,7 @@ class _WatchPageState extends State<WatchPage> {
                           episodeJson: jsonDecode(snapshot.data!.body),
                         ),
                         errorBuilder: (context, errorMessage) {
-                          return Center(
+                          return const Center(
                             child: CircularProgressIndicator(),
                           );
                         },

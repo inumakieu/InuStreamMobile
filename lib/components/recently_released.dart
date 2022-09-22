@@ -22,7 +22,7 @@ class _RecentlyReleasedState extends State<RecentlyReleased> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(left: 40.0),
+      margin: EdgeInsets.only(left: 30.0),
       height: 240.0,
       width: double.infinity,
       //color: Colors.deepPurple,
@@ -34,94 +34,63 @@ class _RecentlyReleasedState extends State<RecentlyReleased> {
               children: [
                 GestureDetector(
                   onTap: () async {
-                    if (_selectedIndex == index) {
-                      /* Get.to(
-                        () => WatchPage(
-                          episodeID: episodeIDString,
-                        ),
-                      ); */
-                    } else {
-                      setState(() {
-                        _selectedIndex = index;
-                      });
-                    }
+                    Get.to(
+                      () => WatchPage(
+                        episodeID: widget.recentJson[index]['id'],
+                      ),
+                    );
                   },
-                  child: AnimatedContainer(
-                    duration: Duration(milliseconds: 200),
-                    curve: Curves.ease,
-                    clipBehavior: Clip.antiAlias,
-                    width: _selectedIndex == index ? 160.0 : 110.0,
-                    height: _selectedIndex == index ? 210.0 : 160.0,
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(
-                        _selectedIndex == index ? 20.0 : 12.0,
-                      ),
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: NetworkImage(widget.recentJson[index]['image']),
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            width: double.infinity,
-                            alignment: Alignment.topRight,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.black.withOpacity(0.8),
-                                  Colors.transparent,
-                                  Colors.transparent,
-                                ],
-                                stops: [
-                                  0.00,
-                                  0.4,
-                                  1,
-                                ],
-                              ),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                widget.recentJson[index]['episode'].toString(),
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 26.0,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AnimatedContainer(
+                        duration: Duration(milliseconds: 200),
+                        curve: Curves.ease,
+                        clipBehavior: Clip.antiAlias,
+                        width: 140.0,
+                        height: 200.0,
+                        decoration: BoxDecoration(
+                          color: Colors.grey,
+                          borderRadius: BorderRadius.circular(
+                            20.0,
+                          ),
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image:
+                                NetworkImage(widget.recentJson[index]['image']),
                           ),
                         ),
-                        Container(
-                          height: 50.0,
-                          width: double.infinity,
-                          color: Colors.black,
-                          alignment: Alignment.center,
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Text(
-                              widget.recentJson[index]['title'],
-                              textAlign: TextAlign.center,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                      ),
+                      SizedBox(
+                        height: 8.0,
+                      ),
+                      Container(
+                        width: 140.0,
+                        child: Text(
+                          widget.recentJson[index]['title'],
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Color(0xff999999),
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.w500,
                           ),
-                        )
-                      ],
-                    ),
+                        ),
+                      ),
+                      Text(
+                        'Episode ' +
+                            widget.recentJson[index]['episode'].toString(),
+                        style: TextStyle(
+                          color: Color(0xff999999),
+                          fontSize: 12.0,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 SizedBox(
-                  width: 12.0,
+                  width: 20.0,
                 ),
               ],
             );
