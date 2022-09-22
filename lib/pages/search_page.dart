@@ -188,6 +188,8 @@ class _SearchPageState extends State<SearchPage> {
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: 12.0,
+                                                    decoration:
+                                                        TextDecoration.none,
                                                   ),
                                                   maxLines: 1,
                                                   overflow:

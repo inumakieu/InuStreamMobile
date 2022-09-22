@@ -148,6 +148,7 @@ class _WatchPageState extends State<WatchPage> {
                       EpisodeDetails.fromJson(jsonDecode(snapshot.data!.body));
 
                   var subs = jsonDecode(snapshot.data!.body)['subtitles'];
+                  print(subs);
 
                   var i = 0;
                   for (var subtitle in subs) {
