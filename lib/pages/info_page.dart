@@ -8,8 +8,11 @@ import 'package:http/http.dart' as http;
 import 'package:inu_stream_ios/pages/home_page.dart';
 import 'package:inu_stream_ios/pages/search_page.dart';
 import 'package:inu_stream_ios/pages/watch_page.dart';
+import 'package:isar/isar.dart';
 import 'package:scroll_shadow_container/scroll_shadow_container.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../anime_settings.dart';
 
 class InfoPage extends StatefulWidget {
   final String anilistID;
@@ -28,6 +31,8 @@ class InfoPage extends StatefulWidget {
 
 class _InfoPageState extends State<InfoPage> {
   bool doneLoading = false;
+  bool loadedSchema = false;
+
   @override
   void initState() {
     SystemChrome.setPreferredOrientations([
@@ -282,9 +287,37 @@ class _InfoPageState extends State<InfoPage> {
                             ),
                           ),
                           SliverToBoxAdapter(
-                            child: EpisodeList(
-                              json: json,
-                            ),
+                            child: loadedSchema == false
+                                ? FutureBuilder<Isar>(
+                                    future: Isar.open([AnimeSettingsSchema]),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData) {
+                                        setState(() {
+                                          loadedSchema = true;
+                                        });
+                                        final animeSettings =
+                                            snapshot.data!.animeSettings;
+
+                                        var anime =
+                                            AnimeSettings(id: json['id']);
+                                        anime.watched = [
+                                          1,
+                                          2,
+                                        ];
+
+                                        animeSettings.put(anime);
+                                        print(animeSettings.get(json['id']));
+                                        return EpisodeList(
+                                          json: json,
+                                        );
+                                      } else {
+                                        return SizedBox.shrink();
+                                      }
+                                    },
+                                  )
+                                : EpisodeList(
+                                    json: json,
+                                  ),
                           )
                         ],
                       );
@@ -606,19 +639,70 @@ class _EpisodeListState extends State<EpisodeList> {
                               width: 120.0,
                               height: 120 / 16 * 9,
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(
-                                    12.0,
+                                borderRadius: BorderRadius.circular(
+                                  12.0,
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.black,
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(11.0),
+                                        bottomRight: Radius.circular(12.0),
+                                      ),
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 12.0,
+                                      vertical: 3.0,
+                                    ),
+                                    child: Text(
+                                      'Watched',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 10.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
-                                  gradient: const LinearGradient(
-                                    colors: [
-                                      Colors.black,
-                                      Colors.transparent,
-                                    ],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                  )),
-                              clipBehavior: Clip.antiAlias,
-                            ),
+                                  /* Container(
+                                    width: 120.0,
+                                    height: 30.0,
+                                    alignment: Alignment.centerRight,
+                                    padding: EdgeInsets.only(
+                                      bottom: 4.0,
+                                      right: 4.0,
+                                    ),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Color(0xff738CA5),
+                                        borderRadius:
+                                            BorderRadius.circular(40.0),
+                                      ),
+                                      padding: EdgeInsets.only(
+                                        left: 10.0,
+                                        top: 2.0,
+                                        right: 8.0,
+                                        bottom: 4.0,
+                                      ),
+                                      child: Text(
+                                        'Filler',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 10.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ) */
+                                ],
+                              ),
+                            )
                           ],
                         ),
                         const SizedBox(
