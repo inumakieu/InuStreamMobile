@@ -95,7 +95,9 @@ class _WatchPageState extends State<WatchPage> {
 
   @override
   void initState() {
-    _videoPlayerController = VideoPlayerController.network('');
+    super.initState();
+    _videoPlayerController = VideoPlayerController.network(
+        'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8');
     _videoPlayerController.initialize();
 
     _chewieController = ChewieController(
@@ -122,7 +124,6 @@ class _WatchPageState extends State<WatchPage> {
       DeviceOrientation.landscapeRight,
     ]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    super.initState();
   }
 
   @override
@@ -141,208 +142,194 @@ class _WatchPageState extends State<WatchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: !finishedLoading
-          ? FutureBuilder<http.Response>(
-              future: getEpisodeJson(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  var episode =
-                      EpisodeDetails.fromJson(jsonDecode(snapshot.data!.body));
+        backgroundColor: Colors.black,
+        body: FutureBuilder<http.Response>(
+          future: getEpisodeJson(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              print(jsonDecode(snapshot.data!.body));
+              var episode = jsonDecode(snapshot.data!.body);
 
-                  var subs = jsonDecode(snapshot.data!.body)['subtitles'];
-                  if (subs == null) {
-                    setState(() {
-                      _videoPlayerController = VideoPlayerController.network(
-                          jsonDecode(snapshot.data!.body)['sources'][0]['url']);
-                      _videoPlayerController.initialize();
-                      selectedSubtitle.value = 0;
+              var subs = episode['subtitles'];
+              if (subs == null) {
+                setState(() {
+                  _videoPlayerController = VideoPlayerController.network(
+                      episode['sources'][0]['url']);
+                  _videoPlayerController.initialize();
+                  selectedSubtitle.value = 0;
 
-                      _chewieController = ChewieController(
-                        videoPlayerController: _videoPlayerController,
-                        aspectRatio: 16 / 9,
-                        fullScreenByDefault: true,
-                        customControls: CustomControls(
-                          backgroundColor: Colors.transparent,
-                          iconColor: Colors.white,
-                          selectedSubtitle: selectedSubtitle,
-                          json: widget.json,
-                          episodeNumber: widget.episodeNumber,
-                          episodeJson: jsonDecode(snapshot.data!.body),
-                        ),
-                        errorBuilder: (context, errorMessage) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        },
+                  _chewieController = ChewieController(
+                    videoPlayerController: _videoPlayerController,
+                    aspectRatio: 16 / 9,
+                    fullScreenByDefault: true,
+                    customControls: CustomControls(
+                      backgroundColor: Colors.transparent,
+                      iconColor: Colors.white,
+                      selectedSubtitle: selectedSubtitle,
+                      json: widget.json,
+                      episodeNumber: widget.episodeNumber,
+                      episodeJson: episode,
+                    ),
+                    errorBuilder: (context, errorMessage) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
                       );
+                    },
+                  );
 
-                      finishedLoading = true;
-                    });
-                  } else {
-                    print(subs);
+                  finishedLoading = true;
+                });
+              } else {
+                print(subs);
 
-                    var i = 0;
-                    for (var subtitle in subs) {
-                      if (subtitle['lang'] == 'English') {
-                        selectedSubtitle.value = i;
-                        break;
-                      }
-                      i++;
-                    }
+                var i = 0;
+                for (var subtitle in subs) {
+                  if (subtitle['lang'] == 'English') {
+                    selectedSubtitle.value = i;
+                    break;
+                  }
+                  i++;
+                }
 
-                    subtitleController = SubtitleController(
-                      provider: SubtitleProvider.fromNetwork(
-                        Uri.parse(
-                          subs[selectedSubtitle.value]['url'],
+                subtitleController = SubtitleController(
+                  provider: SubtitleProvider.fromNetwork(
+                    Uri.parse(
+                      subs[selectedSubtitle.value]['url'],
+                    ),
+                  ),
+                );
+                subtitleController.initial().whenComplete(() {
+                  setState(() {
+                    _videoPlayerController = VideoPlayerController.network(
+                        episode['sources'][0]['url']);
+                    _videoPlayerController.initialize();
+
+                    subtitleList = Subtitles(subtitleController.subtitles
+                        .map((e) => chewie.Subtitle(
+                            index: e.index,
+                            start: e.start,
+                            end: e.end,
+                            text: e.data))
+                        .toList());
+
+                    _chewieController = ChewieController(
+                      videoPlayerController: _videoPlayerController,
+                      aspectRatio: 16 / 9,
+                      fullScreenByDefault: true,
+                      customControls: CustomControls(
+                        backgroundColor: Colors.transparent,
+                        iconColor: Colors.white,
+                        selectedSubtitle: selectedSubtitle,
+                        json: widget.json,
+                        episodeNumber: widget.episodeNumber,
+                        episodeJson: episode,
+                      ),
+                      errorBuilder: (context, errorMessage) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      },
+                      additionalOptions: (context) {
+                        List<OptionItem> optionsList = [];
+                        for (var i = 0;
+                            i < episode['subtitles'].length - 1;
+                            i++) {
+                          optionsList.add(OptionItem(
+                            onTap: () => setState(() {
+                              selectedSubtitle.value = i;
+                              subtitleController = SubtitleController(
+                                provider: SubtitleProvider.fromNetwork(
+                                  Uri.parse(
+                                    episode['subtitles'][i]['url'],
+                                  ),
+                                ),
+                              );
+                              // ignore: void_checks
+                              subtitleController.initial().whenComplete(() {
+                                setState(() {
+                                  _chewieController.subtitle =
+                                      Subtitles(subtitleController.subtitles
+                                          .map(
+                                            (e) => chewie.Subtitle(
+                                                index: e.index,
+                                                start: e.start,
+                                                end: e.end,
+                                                text: e.data),
+                                          )
+                                          .toList());
+                                });
+                              });
+                            }),
+                            iconData: Icons.chat,
+                            title: episode['subtitles'][i]['lang'],
+                          ));
+                        }
+
+                        return optionsList;
+                      },
+                      subtitle: subtitleList,
+                      subtitleBuilder: (context, subtitle) => Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 40.0),
+                        child: Stack(
+                          children: [
+                            Container(
+                              margin: EdgeInsets.only(
+                                top: 2.0,
+                                left: 2.0,
+                              ),
+                              child: BorderedText(
+                                strokeWidth: 4.0,
+                                strokeColor: Colors.black,
+                                child: Text(
+                                  subtitle,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 24.0,
+                                    fontFamily: 'Trebuchet MS',
+                                  ),
+                                ),
+                              ),
+                            ),
+                            BorderedText(
+                              strokeWidth: 4.0,
+                              strokeColor: Colors.black,
+                              child: Text(
+                                subtitle,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 24.0,
+                                  fontFamily: 'Trebuchet MS',
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     );
-                    subtitleController.initial().whenComplete(() {
-                      setState(() {
-                        _videoPlayerController = VideoPlayerController.network(
-                            'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8');
-                        _videoPlayerController.initialize();
 
-                        subtitleList = Subtitles(subtitleController.subtitles
-                            .map((e) => chewie.Subtitle(
-                                index: e.index,
-                                start: e.start,
-                                end: e.end,
-                                text: e.data))
-                            .toList());
+                    finishedLoading = true;
+                  });
+                });
+              }
 
-                        _chewieController = ChewieController(
-                          videoPlayerController: _videoPlayerController,
-                          aspectRatio: 16 / 9,
-                          fullScreenByDefault: true,
-                          customControls: CustomControls(
-                            backgroundColor: Colors.transparent,
-                            iconColor: Colors.white,
-                            selectedSubtitle: selectedSubtitle,
-                            json: widget.json,
-                            episodeNumber: widget.episodeNumber,
-                            episodeJson: jsonDecode(snapshot.data!.body),
-                          ),
-                          errorBuilder: (context, errorMessage) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          },
-                          additionalOptions: (context) {
-                            List<OptionItem> optionsList = [];
-                            for (var i = 0;
-                                i <
-                                    jsonDecode(snapshot.data!.body)['subtitles']
-                                            .length -
-                                        1;
-                                i++) {
-                              optionsList.add(OptionItem(
-                                onTap: () => setState(() {
-                                  selectedSubtitle.value = i;
-                                  subtitleController = SubtitleController(
-                                    provider: SubtitleProvider.fromNetwork(
-                                      Uri.parse(
-                                        jsonDecode(snapshot.data!.body)[
-                                            'subtitles'][i]['url'],
-                                      ),
-                                    ),
-                                  );
-                                  // ignore: void_checks
-                                  subtitleController.initial().whenComplete(() {
-                                    setState(() {
-                                      _chewieController.subtitle =
-                                          Subtitles(subtitleController.subtitles
-                                              .map(
-                                                (e) => chewie.Subtitle(
-                                                    index: e.index,
-                                                    start: e.start,
-                                                    end: e.end,
-                                                    text: e.data),
-                                              )
-                                              .toList());
-                                    });
-                                  });
-                                }),
-                                iconData: Icons.chat,
-                                title:
-                                    jsonDecode(snapshot.data!.body)['subtitles']
-                                        [i]['lang'],
-                              ));
-                            }
-
-                            return optionsList;
-                          },
-                          subtitle: subtitleList,
-                          subtitleBuilder: (context, subtitle) => Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 10.0, horizontal: 40.0),
-                            child: Stack(
-                              children: [
-                                Container(
-                                  margin: EdgeInsets.only(
-                                    top: 2.0,
-                                    left: 2.0,
-                                  ),
-                                  child: BorderedText(
-                                    strokeWidth: 4.0,
-                                    strokeColor: Colors.black,
-                                    child: Text(
-                                      subtitle,
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 24.0,
-                                        fontFamily: 'Trebuchet MS',
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                BorderedText(
-                                  strokeWidth: 4.0,
-                                  strokeColor: Colors.black,
-                                  child: Text(
-                                    subtitle,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 24.0,
-                                      fontFamily: 'Trebuchet MS',
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-
-                        finishedLoading = true;
-                      });
-                    });
-                  }
-
-                  return SafeArea(
-                    maintainBottomViewPadding: true,
-                    child: Chewie(
-                      controller: _chewieController,
-                    ),
-                  );
-                } else {
-                  return SafeArea(
-                    maintainBottomViewPadding: true,
-                    child: Chewie(
-                      controller: _chewieController,
-                    ),
-                  );
-                }
-              },
-            )
-          : SafeArea(
-              maintainBottomViewPadding: true,
-              child: Chewie(
-                controller: _chewieController,
-              ),
-            ),
-    );
+              return SafeArea(
+                maintainBottomViewPadding: true,
+                child: Chewie(
+                  controller: _chewieController,
+                ),
+              );
+            } else {
+              return SafeArea(
+                maintainBottomViewPadding: true,
+                child: Chewie(
+                  controller: _chewieController,
+                ),
+              );
+            }
+          },
+        ));
   }
 }

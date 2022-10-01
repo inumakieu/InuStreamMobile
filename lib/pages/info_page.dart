@@ -290,7 +290,7 @@ class _InfoPageState extends State<InfoPage> {
                             ),
                           ),
                           SliverToBoxAdapter(
-                            child: Isar.getInstance() == null || !isar.isOpen
+                            child: false
                                 ? FutureBuilder<Isar>(
                                     future: Isar.open([AnimeSettingsSchema]),
                                     builder: (context, snapshot) {

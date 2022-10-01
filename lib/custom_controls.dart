@@ -187,7 +187,8 @@ class _CustomControlsState extends State<CustomControls>
                   ),
                 ),
               ),
-              (widget.episodeJson['intro'] != null &&
+              (widget.episodeJson != null &&
+                      widget.episodeJson['intro'] != null &&
                       (_subtitlesPosition!.inSeconds >=
                               widget.episodeJson['intro']['start'] &&
                           _subtitlesPosition!.inSeconds <=
@@ -430,32 +431,42 @@ class _CustomControlsState extends State<CustomControls>
                         seconds: (newPos * _latestValue.duration.inSeconds)
                             .round()));
                   },
-                  child: Stack(
-                    children: [
-                      AnimatedContainer(
-                        duration: Duration(milliseconds: 150),
-                        width: MediaQuery.of(context).size.width * 0.56,
-                        margin: EdgeInsets.only(right: 24.0, left: 24.0),
-                        height: _dragging ? 10.0 : 6.0,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(40.0),
-                          color: Colors.white.withOpacity(0.6),
+                  child: Container(
+                    height: 20.0,
+                    width: double.infinity,
+                    //width: MediaQuery.of(context).size.width * 0.56,
+                    alignment: Alignment.centerLeft,
+                    child: Stack(
+                      children: [
+                        AnimatedContainer(
+                          duration: Duration(milliseconds: 150),
+                          width: MediaQuery.of(context).size.width * 0.56,
+                          margin: EdgeInsets.only(right: 24.0, left: 24.0),
+                          height: _dragging ? 12.0 : 6.0,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(40.0),
+                            color: Colors.white.withOpacity(0.6),
+                          ),
                         ),
-                      ),
-                      AnimatedContainer(
-                        duration: Duration(milliseconds: 150),
-                        width: MediaQuery.of(context).size.width *
-                            0.56 *
-                            (_latestValue.position.inSeconds /
-                                _latestValue.duration.inSeconds),
-                        margin: EdgeInsets.only(right: 24.0, left: 24.0),
-                        height: _dragging ? 10.0 : 6.0,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(40.0),
-                          color: Colors.white,
+                        AnimatedContainer(
+                          duration: Duration(milliseconds: 150),
+                          width: MediaQuery.of(context).size.width *
+                              0.56 *
+                              ((_latestValue.position.inSeconds != double.nan
+                                      ? _latestValue.position.inSeconds
+                                      : 0.0) /
+                                  (_latestValue.duration.inSeconds != double.nan
+                                      ? _latestValue.duration.inSeconds
+                                      : 1.0)),
+                          margin: EdgeInsets.only(right: 24.0, left: 24.0),
+                          height: _dragging ? 12.0 : 6.0,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(40.0),
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 _buildPosition(iconColor),
