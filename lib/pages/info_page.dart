@@ -13,6 +13,7 @@ import 'package:scroll_shadow_container/scroll_shadow_container.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../anime_settings.dart';
+import '../components/episode_list.dart';
 
 class InfoPage extends StatefulWidget {
   final String anilistID;
@@ -32,12 +33,14 @@ class InfoPage extends StatefulWidget {
 class _InfoPageState extends State<InfoPage> {
   bool doneLoading = false;
   bool loadedSchema = false;
+  late Isar isar;
 
   @override
   void initState() {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
+
     super.initState();
   }
 
@@ -51,7 +54,7 @@ class _InfoPageState extends State<InfoPage> {
           children: [
             FutureBuilder<http.Response>(
               future: http.get(Uri.parse(
-                  'https://consumet-api.herokuapp.com/meta/anilist/info/${widget.anilistID}?provider=zoro')),
+                  'https://consumet-api.herokuapp.com/meta/anilist/info/${widget.anilistID}?provider=zoro&fetchFiller=true')),
               builder: (context, snapshot) {
                 switch (snapshot.connectionState) {
                   default:
@@ -287,30 +290,35 @@ class _InfoPageState extends State<InfoPage> {
                             ),
                           ),
                           SliverToBoxAdapter(
-                            child: Isar.getInstance() == null
+                            child: Isar.getInstance() == null || !isar.isOpen
                                 ? FutureBuilder<Isar>(
                                     future: Isar.open([AnimeSettingsSchema]),
                                     builder: (context, snapshot) {
+                                      print('FUTURE...');
                                       if (snapshot.hasData) {
+                                        isar = snapshot.data!;
                                         print('Anime Settings:');
-                                        final animeSettings =
-                                            snapshot.data!.animeSettings;
 
-                                        var anime =
-                                            AnimeSettings(id: json['id']);
-                                        anime.watched = [
-                                          1,
-                                          2,
-                                        ];
+                                        /* final anime = AnimeSettings(
+                                            id: int.parse(json['id']))
+                                          ..watched = [1, 2];
 
-                                        animeSettings.put(anime);
-                                        print(animeSettings.get(json['id']));
+                                        isar.writeTxn(() async {
+                                          await isar.animeSettings.put(anime);
+                                        }); */ /* 
+                                        var animeSetting = snapshot
+                                            .data!.animeSettings
+                                            .get(int.parse(json['id'])); */
+
                                         return EpisodeList(
                                           json: json,
+                                          isar: isar,
                                         );
                                       } else {
                                         print('SIZED');
-                                        return SizedBox.shrink();
+                                        return EpisodeList(
+                                          json: json,
+                                        );
                                       }
                                     },
                                   )
@@ -482,6 +490,7 @@ class _InfoPageState extends State<InfoPage> {
               left: 20.0,
               child: GestureDetector(
                 onTap: () {
+                  isar.close();
                   Get.back();
                 },
                 child: CircleAvatar(
@@ -496,266 +505,6 @@ class _InfoPageState extends State<InfoPage> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class EpisodeList extends StatefulWidget {
-  dynamic json;
-  EpisodeList({Key? key, required this.json}) : super(key: key);
-
-  @override
-  State<EpisodeList> createState() => _EpisodeListState();
-}
-
-class _EpisodeListState extends State<EpisodeList> {
-  late TextEditingController _textEditingController;
-  int episodeNumber = -1;
-
-  @override
-  void initState() {
-    _textEditingController = TextEditingController();
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: 30.0,
-          ),
-          child: Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Episodes',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Container(
-                  width: 120.0,
-                  height: 40.0,
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 20.0,
-                  ),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextField(
-                      textAlignVertical: TextAlignVertical.center,
-                      controller: _textEditingController,
-                      keyboardType: const TextInputType.numberWithOptions(
-                          signed: true, decimal: true),
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      decoration: InputDecoration.collapsed(
-                        hintText: 'Episode...',
-                        hintStyle:
-                            TextStyle(color: Colors.white.withOpacity(0.7)),
-                        border: InputBorder.none,
-                      ),
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                      onChanged: (value) {
-                        setState(() {
-                          if (value == '' ||
-                              value == '0' ||
-                              int.parse(value) >
-                                  widget.json['episodes'].length) {
-                            episodeNumber = -1;
-                            _textEditingController.clear();
-                          } else {
-                            episodeNumber = int.parse(value);
-                          }
-                        });
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        Container(
-          width: double.infinity,
-          height: 600.0,
-          padding: const EdgeInsets.symmetric(
-            horizontal: 26.0,
-          ),
-          alignment: Alignment.topCenter,
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            itemCount: episodeNumber == -1 ? widget.json['episodes'].length : 1,
-            itemBuilder: ((context, index) {
-              return Column(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Get.to(
-                        () => WatchPage(
-                          episodeID: widget.json['episodes'][index +
-                                  (episodeNumber != -1 ? episodeNumber - 1 : 0)]
-                              ['id'],
-                          json: widget.json,
-                          episodeNumber: index +
-                              (episodeNumber != -1 ? episodeNumber - 1 : 0),
-                        ),
-                      );
-                    },
-                    child: Row(
-                      children: [
-                        Stack(
-                          children: [
-                            Container(
-                              width: 120.0,
-                              height: 120 / 16 * 9,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                  12.0,
-                                ),
-                                color: Colors.black,
-                              ),
-                              clipBehavior: Clip.antiAlias,
-                              child: Image(
-                                  fit: BoxFit.cover,
-                                  image: NetworkImage(widget.json['episodes'][
-                                          index +
-                                              (episodeNumber != -1
-                                                  ? episodeNumber - 1
-                                                  : 0)]['image'] ??
-                                      '')),
-                            ),
-                            Container(
-                              width: 120.0,
-                              height: 120 / 16 * 9,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                  12.0,
-                                ),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.black,
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(11.0),
-                                        bottomRight: Radius.circular(12.0),
-                                      ),
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 12.0,
-                                      vertical: 3.0,
-                                    ),
-                                    child: Text(
-                                      'Watched',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 10.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  /* Container(
-                                    width: 120.0,
-                                    height: 30.0,
-                                    alignment: Alignment.centerRight,
-                                    padding: EdgeInsets.only(
-                                      bottom: 4.0,
-                                      right: 4.0,
-                                    ),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Color(0xff738CA5),
-                                        borderRadius:
-                                            BorderRadius.circular(40.0),
-                                      ),
-                                      padding: EdgeInsets.only(
-                                        left: 10.0,
-                                        top: 2.0,
-                                        right: 8.0,
-                                        bottom: 4.0,
-                                      ),
-                                      child: Text(
-                                        'Filler',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 10.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ) */
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          width: 14.0,
-                        ),
-                        SizedBox(
-                          height: 150 / 16 * 9,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: MediaQuery.of(context).size.width * 0.5,
-                                child: Text(
-                                  widget.json['episodes'][index +
-                                          (episodeNumber != -1
-                                              ? episodeNumber - 1
-                                              : 0)]['title'] ??
-                                      widget.json['title']['english'],
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 2,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12.0,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                height: 4.0,
-                              ),
-                              Text(
-                                'Episode ${index + (episodeNumber != -1 ? episodeNumber : 1)}',
-                                style: TextStyle(
-                                  color: Color(0xff999999),
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 10.0,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 12.0,
-                  ),
-                ],
-              );
-            }),
-          ),
-        ),
-      ],
     );
   }
 }

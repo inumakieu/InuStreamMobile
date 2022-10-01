@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:inu_stream_ios/pages/info_page.dart';
+import 'package:inu_stream_ios/pages/kitsu_info.dart';
 
 class FeaturedContent extends StatefulWidget {
   const FeaturedContent({
@@ -55,265 +56,85 @@ class _FeaturedContentState extends State<FeaturedContent>
                             width: MediaQuery.of(context).size.width,
                             child: CarouselSlider(
                               carouselController: _carouselController,
-                              items: featuredImages.map((e) {
-                                return Stack(
-                                  fit: StackFit.expand,
-                                  children: [
-                                    Hero(
-                                      tag: e.toString(),
-                                      child: AnimatedContainer(
-                                        duration: Duration(milliseconds: 200),
-                                        width: double.infinity,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.7,
-                                        margin: EdgeInsets.only(bottom: 10.0),
-                                        decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                              image: NetworkImage(e),
-                                              filterQuality:
-                                                  ui.FilterQuality.high,
-                                              fit: BoxFit.cover,
-                                              alignment: Alignment.topCenter),
-                                        ),
-                                        child: Container(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.7,
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                              colors: [
-                                                Colors.transparent,
-                                                Color(0xff16151A),
-                                              ],
-                                              begin: Alignment.topCenter,
-                                              end: Alignment.bottomCenter,
-                                              stops: [
-                                                0.0,
-                                                1.0,
-                                              ],
-                                            ),
-                                          ),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              Container(
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                padding: EdgeInsets.symmetric(
-                                                  horizontal: 20.0,
+                              items: featuredImages
+                                  .asMap()
+                                  .map((i, e) {
+                                    return MapEntry(
+                                        i,
+                                        Stack(
+                                          fit: StackFit.expand,
+                                          children: [
+                                            Hero(
+                                              tag: e.toString(),
+                                              child: AnimatedContainer(
+                                                duration:
+                                                    Duration(milliseconds: 200),
+                                                width: double.infinity,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.7,
+                                                margin: EdgeInsets.only(
+                                                    bottom: 10.0),
+                                                decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                                      image: NetworkImage(e),
+                                                      filterQuality:
+                                                          ui.FilterQuality.high,
+                                                      fit: BoxFit.cover,
+                                                      alignment:
+                                                          Alignment.topCenter),
                                                 ),
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      featuredJson[featuredSelectedIndex]
-                                                                  ['duration']
-                                                              .toString() +
-                                                          ' min / Episode',
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 12.0,
-                                                        fontWeight:
-                                                            ui.FontWeight.bold,
-                                                      ),
+                                                child: Container(
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .height *
+                                                      0.7,
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  decoration: BoxDecoration(
+                                                    gradient: LinearGradient(
+                                                      colors: [
+                                                        Colors.transparent,
+                                                        Color(0xff16151A),
+                                                      ],
+                                                      begin:
+                                                          Alignment.topCenter,
+                                                      end: Alignment
+                                                          .bottomCenter,
+                                                      stops: [
+                                                        0.0,
+                                                        1.0,
+                                                      ],
                                                     ),
-                                                    SizedBox(
-                                                      height: 4.0,
-                                                    ),
-                                                    RichText(
-                                                      text: TextSpan(
-                                                        children: [
-                                                          TextSpan(
-                                                            text: 'Episodes: ',
-                                                            style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontSize: 14.0,
-                                                              fontWeight: ui
-                                                                  .FontWeight
-                                                                  .bold,
-                                                            ),
-                                                          ),
-                                                          TextSpan(
-                                                            text: featuredJson[
-                                                                        featuredSelectedIndex]
-                                                                    [
-                                                                    'totalEpisodes']
-                                                                .toString(),
-                                                            style: TextStyle(
-                                                              color: Color(
-                                                                  0xffDC1623),
-                                                              fontSize: 14.0,
-                                                              fontWeight: ui
-                                                                  .FontWeight
-                                                                  .bold,
-                                                            ),
-                                                          ),
-                                                          TextSpan(
-                                                            text: ' - Status: ',
-                                                            style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontSize: 14.0,
-                                                              fontWeight: ui
-                                                                  .FontWeight
-                                                                  .bold,
-                                                            ),
-                                                          ),
-                                                          TextSpan(
-                                                            text:
-                                                                'CURRENTLY AIRING',
-                                                            style: TextStyle(
-                                                              color: Color(
-                                                                  0xffDC1623),
-                                                              fontSize: 14.0,
-                                                              fontWeight: ui
-                                                                  .FontWeight
-                                                                  .bold,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 2.0,
-                                                    ),
-                                                    Container(
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.8,
-                                                      child: Text(
-                                                        featuredJson[
-                                                                    featuredSelectedIndex]
-                                                                ['title']
-                                                            ['userPreferred'],
-                                                        maxLines: 3,
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 24.0,
-                                                          fontWeight: ui
-                                                              .FontWeight.bold,
+                                                  ),
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: [
+                                                      Container(
+                                                        width: MediaQuery.of(
+                                                                context)
+                                                            .size
+                                                            .width,
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                          horizontal: 20.0,
                                                         ),
-                                                        textAlign:
-                                                            ui.TextAlign.start,
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 6.0,
-                                                    ),
-                                                    Container(
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.8,
-                                                      child: Text(
-                                                        featuredJson[
-                                                                    featuredSelectedIndex]
-                                                                ['description']
-                                                            .toString()
-                                                            .replaceAll(
-                                                                '<br>', '\n'),
-                                                        maxLines: 10,
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 12.0,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          fontWeight: ui
-                                                              .FontWeight.w500,
-                                                        ),
-                                                        textAlign:
-                                                            ui.TextAlign.start,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              Container(
-                                                padding: EdgeInsets.only(
-                                                  left: 30.0,
-                                                  top: 20.0,
-                                                  right: 30.0,
-                                                  bottom: 10.0,
-                                                ),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
-                                                  children: [
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        Get.to(
-                                                          () => InfoPage(
-                                                            anilistID: featuredJson[
-                                                                        featuredSelectedIndex]
-                                                                    ['id']
-                                                                .toString(),
-                                                            searchedJson:
-                                                                featuredJson[
-                                                                    featuredSelectedIndex],
-                                                          ),
-                                                          transition: Transition
-                                                              .rightToLeftWithFade,
-                                                          curve: Curves.ease,
-                                                        );
-                                                      },
-                                                      child: AnimatedContainer(
-                                                        duration: Duration(
-                                                            milliseconds: 300),
-                                                        width: 100.0,
-                                                        height: 40.0,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                                color: Color(
-                                                                    0xff1AAEFE),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            35.0),
-                                                                boxShadow:
-                                                                    isWatchedHovered
-                                                                        ? [
-                                                                            BoxShadow(
-                                                                              color: Color(0xff1AAEFE),
-                                                                              blurRadius: 16.0,
-                                                                            )
-                                                                          ]
-                                                                        : null),
-                                                        child: Row(
+                                                        child: Column(
                                                           mainAxisAlignment:
                                                               MainAxisAlignment
-                                                                  .center,
+                                                                  .end,
                                                           crossAxisAlignment:
                                                               CrossAxisAlignment
-                                                                  .center,
+                                                                  .start,
                                                           children: [
-                                                            Icon(
-                                                              FontAwesomeIcons
-                                                                  .circleInfo,
-                                                              color:
-                                                                  Colors.white,
-                                                              size: 22.0,
-                                                            ),
-                                                            SizedBox(
-                                                              width: 12.0,
-                                                            ),
                                                             Text(
-                                                              'INFO',
+                                                              featuredJson[i][
+                                                                          'duration']
+                                                                      .toString() +
+                                                                  ' min / Episode',
                                                               style: TextStyle(
                                                                 color: Colors
                                                                     .white,
@@ -321,77 +142,369 @@ class _FeaturedContentState extends State<FeaturedContent>
                                                                 fontWeight: ui
                                                                     .FontWeight
                                                                     .bold,
+                                                                decoration:
+                                                                    TextDecoration
+                                                                        .none,
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 4.0,
+                                                            ),
+                                                            RichText(
+                                                              text: TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                        'Episodes: ',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontSize:
+                                                                          14.0,
+                                                                      fontWeight: ui
+                                                                          .FontWeight
+                                                                          .bold,
+                                                                      decoration:
+                                                                          TextDecoration
+                                                                              .none,
+                                                                    ),
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text: featuredJson[i]
+                                                                            [
+                                                                            'totalEpisodes']
+                                                                        .toString(),
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: Color(
+                                                                          0xffDC1623),
+                                                                      fontSize:
+                                                                          14.0,
+                                                                      fontWeight: ui
+                                                                          .FontWeight
+                                                                          .bold,
+                                                                      decoration:
+                                                                          TextDecoration
+                                                                              .none,
+                                                                    ),
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text:
+                                                                        ' - Status: ',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontSize:
+                                                                          14.0,
+                                                                      fontWeight: ui
+                                                                          .FontWeight
+                                                                          .bold,
+                                                                      decoration:
+                                                                          TextDecoration
+                                                                              .none,
+                                                                    ),
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text: featuredJson[i]
+                                                                            [
+                                                                            'status']
+                                                                        .toString(),
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: Color(
+                                                                          0xffDC1623),
+                                                                      fontSize:
+                                                                          14.0,
+                                                                      fontWeight: ui
+                                                                          .FontWeight
+                                                                          .bold,
+                                                                      decoration:
+                                                                          TextDecoration
+                                                                              .none,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 2.0,
+                                                            ),
+                                                            Container(
+                                                              width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width *
+                                                                  0.8,
+                                                              child: Text(
+                                                                featuredJson[i][
+                                                                        'title']
+                                                                    [
+                                                                    'userPreferred'],
+                                                                maxLines: 3,
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontSize:
+                                                                      24.0,
+                                                                  fontWeight: ui
+                                                                      .FontWeight
+                                                                      .bold,
+                                                                  decoration:
+                                                                      TextDecoration
+                                                                          .none,
+                                                                ),
+                                                                textAlign: ui
+                                                                    .TextAlign
+                                                                    .start,
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 6.0,
+                                                            ),
+                                                            Container(
+                                                                width: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
+                                                                    0.8,
+                                                                child: RichText(
+                                                                  text:
+                                                                      TextSpan(
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontSize:
+                                                                          12.0,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                    ),
+                                                                    children: featuredJson[i]
+                                                                            [
+                                                                            'description']
+                                                                        .replaceAll(
+                                                                            '\n',
+                                                                            '')
+                                                                        .toString()
+                                                                        .replaceAll(
+                                                                            '<br>',
+                                                                            '\n')
+                                                                        .split(
+                                                                            '<i>')
+                                                                        .map(
+                                                                            (e) {
+                                                                      if (e.contains(
+                                                                          '</i>')) {
+                                                                        return TextSpan(
+                                                                          children: e
+                                                                              .split('</i>')
+                                                                              .asMap()
+                                                                              .entries
+                                                                              .map(
+                                                                                (i) => i.key == 0
+                                                                                    ? TextSpan(text: i.value, style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold))
+                                                                                    : TextSpan(
+                                                                                        text: i.value,
+                                                                                        style: TextStyle(
+                                                                                          fontStyle: FontStyle.normal,
+                                                                                        ),
+                                                                                      ),
+                                                                              )
+                                                                              .toList(),
+                                                                        );
+                                                                      } else {
+                                                                        return TextSpan(
+                                                                            text:
+                                                                                e);
+                                                                      }
+                                                                    }).toList(),
+                                                                  ),
+                                                                  maxLines: 10,
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .start,
+                                                                )),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                          left: 30.0,
+                                                          top: 20.0,
+                                                          right: 30.0,
+                                                          bottom: 10.0,
+                                                        ),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .end,
+                                                          children: [
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                /* Get.to(
+                                                                  () =>
+                                                                      KitsuInfo(
+                                                                    kitsuId:
+                                                                        '13503',
+                                                                  ),
+                                                                  transition:
+                                                                      Transition
+                                                                          .rightToLeftWithFade,
+                                                                  curve: Curves
+                                                                      .ease,
+                                                                ); */
+
+                                                                Get.to(
+                                                                  () =>
+                                                                      InfoPage(
+                                                                    anilistID: featuredJson[i]
+                                                                            [
+                                                                            'id']
+                                                                        .toString(),
+                                                                    searchedJson:
+                                                                        featuredJson[
+                                                                            i],
+                                                                  ),
+                                                                  transition:
+                                                                      Transition
+                                                                          .rightToLeftWithFade,
+                                                                  curve: Curves
+                                                                      .ease,
+                                                                );
+                                                              },
+                                                              child:
+                                                                  AnimatedContainer(
+                                                                duration: Duration(
+                                                                    milliseconds:
+                                                                        300),
+                                                                width: 100.0,
+                                                                height: 40.0,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                        color: Color(
+                                                                            0xff1AAEFE),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(35.0),
+                                                                        boxShadow: isWatchedHovered
+                                                                            ? [
+                                                                                BoxShadow(
+                                                                                  color: Color(0xff1AAEFE),
+                                                                                  blurRadius: 16.0,
+                                                                                )
+                                                                              ]
+                                                                            : null),
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    Icon(
+                                                                      FontAwesomeIcons
+                                                                          .circleInfo,
+                                                                      color: Colors
+                                                                          .white,
+                                                                      size:
+                                                                          22.0,
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width:
+                                                                          12.0,
+                                                                    ),
+                                                                    Text(
+                                                                      'INFO',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        fontSize:
+                                                                            12.0,
+                                                                        fontWeight: ui
+                                                                            .FontWeight
+                                                                            .bold,
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            MouseRegion(
+                                                              onEnter: (e) {
+                                                                setState(() {
+                                                                  isMyListHovered =
+                                                                      true;
+                                                                });
+                                                              },
+                                                              onExit: (e) {
+                                                                setState(() {
+                                                                  isMyListHovered =
+                                                                      false;
+                                                                });
+                                                              },
+                                                              child:
+                                                                  AnimatedContainer(
+                                                                duration: Duration(
+                                                                    milliseconds:
+                                                                        300),
+                                                                width: 40.0,
+                                                                height: 40.0,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                        color: Colors
+                                                                            .black,
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(35.0),
+                                                                        boxShadow: isMyListHovered
+                                                                            ? [
+                                                                                BoxShadow(
+                                                                                  color: Colors.black,
+                                                                                  blurRadius: 16.0,
+                                                                                )
+                                                                              ]
+                                                                            : null),
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    Icon(
+                                                                      FontAwesomeIcons
+                                                                          .plus,
+                                                                      color: Colors
+                                                                          .white,
+                                                                      size:
+                                                                          16.0,
+                                                                    ),
+                                                                  ],
+                                                                ),
                                                               ),
                                                             ),
                                                           ],
                                                         ),
-                                                      ),
-                                                    ),
-                                                    MouseRegion(
-                                                      onEnter: (e) {
-                                                        setState(() {
-                                                          isMyListHovered =
-                                                              true;
-                                                        });
-                                                      },
-                                                      onExit: (e) {
-                                                        setState(() {
-                                                          isMyListHovered =
-                                                              false;
-                                                        });
-                                                      },
-                                                      child: AnimatedContainer(
-                                                        duration: Duration(
-                                                            milliseconds: 300),
-                                                        width: 40.0,
-                                                        height: 40.0,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                                color: Colors
-                                                                    .black,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            35.0),
-                                                                boxShadow:
-                                                                    isMyListHovered
-                                                                        ? [
-                                                                            BoxShadow(
-                                                                              color: Colors.black,
-                                                                              blurRadius: 16.0,
-                                                                            )
-                                                                          ]
-                                                                        : null),
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            Icon(
-                                                              FontAwesomeIcons
-                                                                  .plus,
-                                                              color:
-                                                                  Colors.white,
-                                                              size: 16.0,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
+                                                      )
+                                                    ],
+                                                  ),
                                                 ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              }).toList(),
+                                              ),
+                                            ),
+                                          ],
+                                        ));
+                                  })
+                                  .values
+                                  .toList(),
                               options: CarouselOptions(
                                 height:
                                     MediaQuery.of(context).size.height * 0.6,

@@ -81,8 +81,7 @@ class _SearchPageState extends State<SearchPage> {
                   itemCount: json.length,
                   itemBuilder: ((context, index) {
                     if (json[index]['status'] != 'Not yet aired' &&
-                        json[index]['releaseDate'] != null &&
-                        json[index]['cover'] != null) {
+                        json[index]['releaseDate'] != null) {
                       return Column(
                         children: [
                           GestureDetector(
@@ -137,7 +136,8 @@ class _SearchPageState extends State<SearchPage> {
                                         decoration: BoxDecoration(
                                           image: DecorationImage(
                                               image: NetworkImage(
-                                                json[index]['cover'],
+                                                json[index]['cover'] ??
+                                                    json[index]['image'],
                                               ),
                                               fit: BoxFit.cover),
                                         ),

@@ -48,6 +48,7 @@ dependencies:
   google_fonts: ^3.0.1
   isar: 3.0.0-dev.14
   isar_flutter_libs: 3.0.0-dev.14
+  flutter_markdown: ^0.6.12
 
 dev_dependencies:
   flutter_test:

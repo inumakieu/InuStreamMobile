@@ -16,6 +16,7 @@ import 'package:chewie/src/models/option_item.dart';
 import 'package:chewie/src/models/subtitle_model.dart';
 import 'package:chewie/src/notifiers/index.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -405,7 +406,58 @@ class _CustomControlsState extends State<CustomControls>
             color: backgroundColor,
             child: Row(
               children: <Widget>[
-                _buildProgressBar(),
+                //_buildProgressBar(),
+                GestureDetector(
+                  onHorizontalDragStart: (details) {
+                    setState(() {
+                      _dragging = true;
+                    });
+                  },
+                  onHorizontalDragEnd: (details) {
+                    setState(() {
+                      _dragging = false;
+                    });
+                  },
+                  onHorizontalDragUpdate: (details) {
+                    _cancelAndRestartTimer();
+
+                    // seek to current position
+
+                    var maxWidth = MediaQuery.of(context).size.width * 0.56;
+                    var newPos = details.localPosition.dx / maxWidth;
+                    clampDouble(newPos, 0.0, 1.0);
+                    chewieController.seekTo(Duration(
+                        seconds: (newPos * _latestValue.duration.inSeconds)
+                            .round()));
+                  },
+                  child: Stack(
+                    children: [
+                      AnimatedContainer(
+                        duration: Duration(milliseconds: 150),
+                        width: MediaQuery.of(context).size.width * 0.56,
+                        margin: EdgeInsets.only(right: 24.0, left: 24.0),
+                        height: _dragging ? 10.0 : 6.0,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(40.0),
+                          color: Colors.white.withOpacity(0.6),
+                        ),
+                      ),
+                      AnimatedContainer(
+                        duration: Duration(milliseconds: 150),
+                        width: MediaQuery.of(context).size.width *
+                            0.56 *
+                            (_latestValue.position.inSeconds /
+                                _latestValue.duration.inSeconds),
+                        margin: EdgeInsets.only(right: 24.0, left: 24.0),
+                        height: _dragging ? 10.0 : 6.0,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(40.0),
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 _buildPosition(iconColor),
                 _buildRemaining(iconColor),
                 _buildSubtitleToggle(iconColor, barHeight),
@@ -795,7 +847,8 @@ class _CustomControlsState extends State<CustomControls>
                           ),
                           Text(
                             widget.json['episodes'][widget.episodeNumber]
-                                ['title'],
+                                    ['title'] ??
+                                "",
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: ui.FontWeight.w500,
